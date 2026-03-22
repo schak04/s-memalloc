@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main() {
+int main() {
     printf("Memory Allocator Project");
     return 0;
 }
