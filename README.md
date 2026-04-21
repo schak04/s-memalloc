@@ -1,6 +1,6 @@
-# Memory Allocator
+# s-memalloc (Saptaparno/Sapto's memory allocator)
 
-This is a custom memory allocator I'm currently writing from scratch in C to practice systems programming.
+This is a custom memory (heap) allocator I'm currently writing from scratch in C to practice systems programming (and GIT GUD at programming in general) and understand how memory allocation works internally.
 
 ## Goal
 I'm basically trying to reimplement malloc/free from scratch in C.
