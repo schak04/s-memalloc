@@ -30,4 +30,7 @@ We need to request the system to increment `brk`, obviously.
 
 I can make use of the system call `sbrk()` to manipulate the program break, `brk`. Would be the same for other Unix-like systems.
 
+> [!NOTE]
+> `brk()` and `sbrk()` change the location of the program break, which defines the end of the process's data segment (i.e., the program break is the first location after the end of the uninitialized data segment).  Increasing the program break has the effect of allocating memory to the process; decreasing the break deallocates memory.
+
 ---
