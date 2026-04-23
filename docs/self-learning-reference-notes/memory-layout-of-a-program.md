@@ -6,8 +6,8 @@ A process runs within its own virtual address space that’s distinct from the v
 This virtual address space typically comprises of these parts:  
 - **Text Segment**: _stores the executable code of the program like program’s functions and instructions_
 - **Data Segment**: _stores global and static variables of the program_
-    - **Initialised Data Segment**: _contains global and static variables that have been initialised by the programmer_
-    - **Uninitialised Data Segment** (BSS / Block Started by Symbol): _This contains zero-initialised static data. These variables are automatically initialized to zero by the system at runtime._
+    - **Initialised Data Segment**: _contains non-zero global and static variables that have been initialised by the programmer_
+    - **Uninitialised Data Segment** (BSS / Block Started by Symbol): _This contains zero-initialised static data. These variables, if uninitialised, are automatically initialised to zero by the system at runtime._
 - **Heap**: _used for dynamic memory allocation_
 - **Stack**: _stores local variables, function parameters, and return addresses for each function call_
 
