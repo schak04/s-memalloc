@@ -17,3 +17,5 @@ This virtual address space typically comprises of these parts:
 
 - The stack and the heap grow in the opposite directions.
 - Sometimes, initialised vars + bss (uninitialised vars) + heap segment = data segment
+    - End of this segment is marked off by a pointer named "program break" or `brk`.
+    - Hence, `brk` points to the end of the heap.
