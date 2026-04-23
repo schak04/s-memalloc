@@ -13,9 +13,21 @@ This virtual address space typically comprises of these parts:
 
 ---
 
-## More Info
+## Program Break
 
 - The stack and the heap grow in the opposite directions.
 - Sometimes, initialised vars + bss (uninitialised vars) + heap segment = data segment
     - End of this segment is marked off by a pointer named "program break" or `brk`.
     - Hence, `brk` points to the end of the heap.
+
+**So, what if we want to allocate more memory in the heap?**  
+We need to request the system to increment `brk`, obviously.
+**To release memory**, similarly, we need to request the system to decrement `brk`.
+
+---
+
+## Since I use Linux (Arch btw)
+
+I can make use of the system call `sbrk()` to manipulate the program break, `brk`. Would be the same for other Unix-like systems.
+
+---
