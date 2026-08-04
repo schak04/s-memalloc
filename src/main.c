@@ -1,5 +1,5 @@
 /*
-s-memalloc (a small reimplementation of malloc using the sbrk system call)
+s-memalloc
 Author: Saptaparno Chakraborty
 */
 
