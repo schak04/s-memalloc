@@ -16,6 +16,6 @@ A system call that can be used in Linux or Unix-like systems to manipulate the p
 Yes, it is used in `malloc` for small memory allocation, and otherwise `malloc` uses `mmap()`. And no, `sbrk()` is not thread safe, and `mmap()` is a modern and better alternative to it.
 `sbrk()` can only grow or shrink in **Last In First Out** order.
 
-But I'll use `sbrk()` for now, and will integrate `mmap` later, to enhance my learnings.
+But I'll use `sbrk()` for now, and will integrate `mmap` later, to enhance my learning.
 
 ---

@@ -1,8 +1,7 @@
 /*
 s-memalloc (a small reimplementation of malloc using the sbrk system call)
 Author: Saptaparno Chakraborty
-Purpose: Made for pure learning
-*/ 
+*/
 
 #include <stdio.h>
 
