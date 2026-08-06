@@ -4,7 +4,7 @@ This is a custom memory (heap) allocator I'm currently writing from scratch in C
 
 ## Goal
 
-I'm basically trying to reimplement `malloc` and `free` from scratch in C.
+I'm basically trying to reimplement `malloc`, `calloc`, `realloc`, and `free` from scratch in C.
 
 ## Purpose
 
