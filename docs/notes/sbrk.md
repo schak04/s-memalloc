@@ -8,7 +8,7 @@ A system call that can be used in Linux or Unix-like systems to manipulate the p
 
 - sbrk(0) gives the current address of the program break.
 - sbrk(x) where x is positive, increments brk by x bytes -> allocates memory.
-- sbrk(-x) with where x is positive (so -x will be negative), decrements brk by x bytes -> releases memory.
+- sbrk(-x) where x is positive (so -x will be negative), decrements brk by x bytes -> releases memory.
 - On failure, sbrk() returns `(void*) -1`.
 
 ## Is it still used? Is it thread safe?
