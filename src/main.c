@@ -34,12 +34,12 @@ void* s_malloc(size_t size) {
 // 1. size, and 2. whether it is free or not
 // this info is stored in a header hidden from the calling program
 /*
- +---------------------------------+
- |            |                    |
- |  header    |   Actual memory    |
- |            |      block         |
- |            |                    |
- +---------------------------------+
++---------------------------------+
+|            |                    |
+|  header    |   Actual memory    |
+|            |      block         |
+|            |                    |
++---------------------------------+
 */
 
 // NOTE: when a program requests 'size' bytes of memory,
