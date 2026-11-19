@@ -52,10 +52,13 @@ typedef union mem_block_info {
 // failure -> (void*) -1
 
 void* s_malloc(size_t size) {
+    if (!size) return NULL;
+
     // 'size' bytes of memory needed -> sbrk(total_size)
     // total_size = header_size + size
     size_t total_size;
     void* mem_block;
+    mem_block_info* info;
 
     if (mem_block == (void*)-1) {
         return NULL;
