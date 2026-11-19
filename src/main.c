@@ -7,30 +7,13 @@ Author: Saptaparno Chakraborty
 #include <stdlib.h>
 #include <unistd.h>
 
-typedef struct mem_block_info mem_block_info;
-
-// NOTE: sbrk is a system call that can be used to manipulate the program break `brk`
-// - sbrk(0) gives the current address of the program break
-// - sbrk(x) where x is positive, increments brk by x bytes -> allocates memory
-// - sbrk(-x) where x is positive, decrements brk by x bytes -> releases memory
-// - On failure, sbrk() returns `(void*) -1`
-void* s_malloc(size_t size) {
-    void* mem_block = sbrk(size);
-
-    if (mem_block == (void*)-1) {
-        return NULL;
-    }
-
-    return mem_block;
-}
-
-// NOTE: to free memory, the size of the block must be known
+// to free memory, the size of the block must be known
 // so it needs to be stored somewhere
 // plus, heap memory is contiguous -> it can only be stretched and
 // shrunk at one end, so freeing memory != releasing memory
 // a freed block can simply be marked as free and reused later
 
-// NOTE: every memory block needs to store 2 things:
+// every memory block needs to store 2 things:
 // 1. size, and 2. whether it is free or not
 // this info is stored in a header hidden from the calling program
 /*
@@ -42,18 +25,43 @@ void* s_malloc(size_t size) {
 +----------------------------+
 */
 
-// NOTE: when a program requests 'size' bytes of memory,
-// total_size = header_size + size -> call sbrk(total_size)
-
-struct mem_block_info {
-    size_t size;
-    unsigned is_free;
-    struct mem_block_info* next;
-};
-
-// NOTE: a linked list to be used to keep track of the memory blocks
+// a linked list is to be used to keep track of the memory blocks
 // allocated by s_malloc, so freed blocks can be found and reused
 
-// TODO: continue from here
+// NOTE:
+// 16-byte size: the object occupies 16 bytes
+// 16-byte alignment: the object's starting address must be a multiple of 16
+
+// ensures the memory block header is aligned to 16 bytes
+typedef char MEM_BLOCK_INFO_ALIGNER[16];
+
+typedef union mem_block_info {
+    struct {
+        size_t size;
+        unsigned is_free;
+        union mem_block_info* next;
+    } mem_block_info;
+
+    MEM_BLOCK_INFO_ALIGNER aligner;
+} mem_block_info;
+
+// NOTE:
+// sbrk(0) -> current address of the program break (brk)
+// sbrk(x) increments brk by x bytes
+// sbrk(-x) decrements brk by x bytes
+// failure -> `(void*) -1`
+
+void* s_malloc(size_t size) {
+    // 'size' bytes of memory needed -> sbrk(total_size)
+    // total_size = header_size + size
+    size_t total_size;
+    void* mem_block;
+
+    if (mem_block == (void*)-1) {
+        return NULL;
+    }
+
+    return mem_block;
+}
 
 void s_free(void* _Nullable p) {}
