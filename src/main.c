@@ -49,7 +49,7 @@ typedef union mem_block_info {
 // sbrk(0) -> current address of the program break (brk)
 // sbrk(x) increments brk by x bytes
 // sbrk(-x) decrements brk by x bytes
-// failure -> `(void*) -1`
+// failure -> (void*) -1
 
 void* s_malloc(size_t size) {
     // 'size' bytes of memory needed -> sbrk(total_size)
