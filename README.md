@@ -1,14 +1,18 @@
-# s-memalloc (Saptaparno/Sapto's memory allocator)
+# s-memalloc (Saptaparno's memory allocator)
 
-This is a custom memory (heap) allocator I'm currently writing from scratch in C to practise systems programming and understand how memory allocation works internally.
+Reimplementing `malloc`, `calloc`, `realloc`, and `free` from scratch in C.
 
-## Goal
+This is for my learning of how programs ask the OS for memory, how memory is tracked, and how to manage it efficiently.
 
-I'm basically trying to reimplement `malloc`, `calloc`, `realloc`, and `free` from scratch in C.
+---
 
-## Purpose
+## Design and Visualisation
 
-This project is for learning how programs ask the OS for memory, how memory is tracked, and how to manage it efficiently.
+First of all, this is roughly what the memory layout of a program looks like:
+
+![memory layout](./docs/sketches/memory-layout.png)
+
+I'll write more about how I'm implementing it gradually, since I mainly prefer visualising things on paper and only keeping cleaned up and refined stuff here.
 
 ---
 
