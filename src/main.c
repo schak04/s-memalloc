@@ -47,7 +47,7 @@ mem_block_info* scan_and_fetch_free_block(size_t size) {
 // sbrk(-x) decrements brk by x bytes
 // failure -> (void*) -1
 
-// a linked list of (info + memory block)s store the allocated memory blocks
+// a linked list of (memory block + its info containing header)s store the allocated memory blocks
 
 void* s_malloc(size_t size) {
     if (!size) return NULL;
