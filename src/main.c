@@ -26,6 +26,8 @@ typedef union mem_block_info {
 
 mem_block_info *head, *tail;
 
+// shared state: head & tail, the linked list of memory block headers, each memory block's metadata
+
 pthread_mutex_t s_malloc_lock = PTHREAD_MUTEX_INITIALIZER;
 
 mem_block_info* scan_and_fetch_free_block(size_t size) {
@@ -47,7 +49,7 @@ mem_block_info* scan_and_fetch_free_block(size_t size) {
 // sbrk(-x) decrements brk by x bytes
 // failure -> (void*) -1
 
-// a linked list of (memory block + its info containing header)s store the allocated memory blocks
+// a linked list of (memory block + its metadata)s store the allocated memory blocks
 
 void* s_malloc(size_t size) {
     if (!size) return NULL;
@@ -56,8 +58,11 @@ void* s_malloc(size_t size) {
     void* mem_block;
     mem_block_info* info;
 
+    // protect shared allocator state from concurrent modifications
     pthread_mutex_lock(&s_malloc_lock);
 
+    // search and reserve a free block while holding the lock to prevent
+    // multiple threads from claiming the same block
     info = scan_and_fetch_free_block(size);
 
     if (info) {
@@ -66,7 +71,7 @@ void* s_malloc(size_t size) {
         return (void*)(info + 1);  // the block whose details 'info' carries
     }
 
-    // in case no free block exists already
+    // no suitable free block exists so request additional heap memory
 
     size_to_be_allocated = sizeof(mem_block_info) + size;
     mem_block = sbrk(size_to_be_allocated);
@@ -76,7 +81,7 @@ void* s_malloc(size_t size) {
         return NULL;
     }
 
-    // make new mem_block's mem_block_info
+    // set new mem_block's metadata
     info = mem_block;
     info->payload.size = size;
     info->payload.is_free = false;
