@@ -16,6 +16,10 @@ The stack and the heap grow in opposite directions.
 
 The main mechanism I'm using to write this memory allocator is a system call called `sbrk` which manipulates the program break (brk, responsible for marking off the end of the heap).
 
+The memory blocks are kept together in a linked list like this, to make it convenient to traverse through the blocks:
+
+![memory block linked list](./docs/sketches/mem_block_linked_list.png)
+
 ---
 
 ## Author
