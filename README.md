@@ -6,13 +6,15 @@ This is for my learning of how programs ask the OS for memory, how memory is tra
 
 ---
 
-## Design and Visualisation
+## Design
 
 First of all, this is roughly what the memory layout of a program looks like:
 
 ![memory layout](./docs/sketches/memory-layout.png)
 
-I'll write more about how I'm implementing it gradually, since I mainly prefer visualising things on paper and only keeping cleaned up and refined stuff here.
+The stack and the heap grow in opposite directions.
+
+The main mechanism I'm using to write this memory allocator is a system call called `sbrk` which manipulates the program break (brk, responsible for marking off the end of the heap).
 
 ---
 
