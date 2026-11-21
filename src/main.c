@@ -100,4 +100,45 @@ void* s_malloc(size_t size) {
     return (void*)(info + 1);
 }
 
-void s_free(void* _Nullable p) {}
+// determine if the block is at the end of the heap
+// if it is then it's released
+// otherwise it's marked as free and reserved for future reuse
+void s_free(void* mem_block) {
+    if (!mem_block) return;
+
+    mem_block_info* info;
+
+    pthread_mutex_lock(&s_malloc_lock);
+
+    info = (mem_block_info*)mem_block - 1;
+
+    void* program_break = sbrk(0);
+
+    // cast to char* to perform byte level pointer arithmetic
+    // adding the block size gives the address immediately after the block
+
+    // end of the memory block == program break
+    if ((char*)mem_block + info->payload.size == program_break) {
+        if (head == tail) {
+            head = tail = NULL;
+        } else {
+            mem_block_info* curr = head;
+            while (curr) {
+                if (curr->payload.next == tail) {
+                    curr->payload.next = NULL;
+                    tail = curr;
+                }
+                curr = curr->payload.next;
+            }
+        }
+
+        sbrk(0 - sizeof(mem_block_info) - info->payload.size);
+
+        pthread_mutex_unlock(&s_malloc_lock);
+        return;
+    }
+
+    // the block isn't at the end of the heap
+    info->payload.is_free = true;
+    pthread_mutex_unlock(&s_malloc_lock);
+}
