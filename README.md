@@ -1,31 +1,31 @@
-# s-memalloc (Saptaparno's memory allocator)
+# s-memalloc
 
-An experimental memory allocator written in C. `s_malloc` and `s_free` are implemented; `s_calloc` and `s_realloc` are pending.
+A small C memory allocator project for learning how dynamic memory is requested, tracked, and reused. It provides `s_malloc`, `s_free`, `s_calloc`, and `s_realloc` as learning implementations of the familiar allocation functions.
 
-This project is for my learning of how programs request memory from the OS, how memory is tracked, and how to manage it efficiently.
+## Current scope
 
----
+I've implemented all four functions with some behaviours intentionally kept simple. `s_malloc` returns `NULL` for a zero-size request and `s_calloc` checks for multiplication overflow. `s_realloc` allocates a new block when growing, copies the old contents, and frees the old block; it returns the existing block when the requested size fits. Shrinking a block in place is not implemented yet.
+
+This is a hobby/learning project.
 
 ## Design
 
-First of all, this is roughly what the memory layout of a program looks like:
+Each allocation has a metadata header (`mem_block_info`) immediately before its usable memory. Metadata are linked together so the allocator can search for memory blocks to reuse. `s_malloc` uses a first-fit search: it takes the first free block that is large enough, or asks for more memory with `sbrk` if none is available.
 
-![memory layout](./docs/sketches/memory-layout.png)
+Freed blocks that are not at the end of the heap are marked free for later reuse. If the freed block is at the end, `s_free` moves the program break backwards to return that memory. Blocks are not split or merged. A mutex protects the allocator's shared block list while `s_malloc` and `s_free` update it.
 
-The stack and the heap grow in opposite directions.
+The allocator's use of `sbrk` is the central part of this project: it makes the relationship between allocation metadata, the heap, and the program break visible.
 
-`s_malloc` requests memory with `sbrk`, which moves the program break (the end of the process's data segment). It stores a header before each returned block and tracks those headers in a linked list. When an existing free block is large enough, `s_malloc` reuses it; otherwise, it requests a new block from `sbrk`.
+## Diagrams
 
-The memory blocks are kept in a linked list so the allocator can traverse and find reusable blocks:
+The first sketch shows the process memory layout:
 
-![memory block linked list](./docs/sketches/mem_block_linked_list.png)
+![Memory layout](./docs/sketches/memory-layout.png)
 
-`s_malloc` returns `NULL` for a zero-size request or if `sbrk` fails. `s_free` ignores `NULL`. It returns a block at the end of the heap to the system by moving the program break backwards. Other blocks are marked free so a later `s_malloc` call can reuse them. Access to the allocator's block list is protected by a mutex.
+The second is to visualise the linked list of the memory blocks' metadata:
 
----
+![Memory block linked list](./docs/sketches/mem_block_linked_list.png)
 
 ## Author
 
 Saptaparno Chakraborty
-
----
