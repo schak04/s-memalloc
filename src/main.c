@@ -53,8 +53,8 @@ mem_block_info* scan_and_fetch_free_block(size_t size) {
 
 // a linked list of (memory block + its metadata)s store the allocated memory blocks
 
-void* s_malloc(size_t size) {
-    if (!size) return NULL;
+void* s_malloc(size_t req_size) {
+    if (!req_size) return NULL;
 
     size_t size_to_be_allocated;
     void* mem_block;
@@ -65,7 +65,7 @@ void* s_malloc(size_t size) {
 
     // search and reserve a free block while holding the lock to prevent
     // multiple threads from claiming the same block
-    info = scan_and_fetch_free_block(size);
+    info = scan_and_fetch_free_block(req_size);
 
     if (info) {
         info->payload.is_free = false;
@@ -75,7 +75,7 @@ void* s_malloc(size_t size) {
 
     // no suitable free block exists so request additional heap memory
 
-    size_to_be_allocated = sizeof(mem_block_info) + size;
+    size_to_be_allocated = sizeof(mem_block_info) + req_size;
     mem_block = sbrk(size_to_be_allocated);
 
     if (mem_block == (void*)-1) {  // sbrk failure
@@ -85,7 +85,7 @@ void* s_malloc(size_t size) {
 
     // set new mem_block's metadata
     info = mem_block;
-    info->payload.size = size;
+    info->payload.size = req_size;
     info->payload.is_free = false;
     info->payload.next = NULL;
 
@@ -169,4 +169,32 @@ void* s_calloc(size_t num_of_elements_to_allocate_for, size_t size_of_each_eleme
     memset(mem_block, 0, size_to_be_allocated);
 
     return mem_block;
+}
+
+// reallocate a memory block with a different size
+void* s_realloc(void* old_mem_block, size_t new_req_size) {
+    if (!old_mem_block && new_req_size) {
+        return s_malloc(new_req_size);
+    }
+    if (!new_req_size) {
+        s_free(old_mem_block);
+        return NULL;
+    }
+
+    // get the memory block's metadata
+    mem_block_info* info = (mem_block_info*)old_mem_block - 1;
+
+    // can't shrink the original block for now
+    // TODO: allow shrinking because realloc does so
+    if (info->payload.size >= new_req_size) {
+        return old_mem_block;
+    }
+
+    void* new_mem_block = s_malloc(new_req_size);
+    if (new_mem_block) {
+        memcpy(new_mem_block, old_mem_block, info->payload.size);
+        s_free(old_mem_block);
+    }
+
+    return new_mem_block;
 }
