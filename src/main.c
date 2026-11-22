@@ -132,7 +132,7 @@ void s_free(void* mem_block) {
             }
         }
 
-        sbrk(0 - sizeof(mem_block_info) - info->payload.size);
+        sbrk(-(sizeof(mem_block_info) + info->payload.size));
 
         pthread_mutex_unlock(&s_malloc_lock);
         return;
