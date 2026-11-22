@@ -5,8 +5,10 @@ Author: Saptaparno Chakraborty
 
 #include <pthread.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // NOTE: x-byte alignment: the object's starting address must be a multiple of x
@@ -141,4 +143,30 @@ void s_free(void* mem_block) {
     // the block isn't at the end of the heap
     info->payload.is_free = true;
     pthread_mutex_unlock(&s_malloc_lock);
+}
+
+// must be init to 0s unlike s_malloc
+void* s_calloc(size_t num_of_elements_to_allocate_for, size_t size_of_each_element_in_bytes) {
+    if (!num_of_elements_to_allocate_for || !size_of_each_element_in_bytes) return NULL;
+
+    // n -> num_of_elements_to_allocate_for
+    // sz -> size_of_each_element_in_bytes
+    // n * sz <= SIZE_MAX
+    // n >= SIZE_MAX / sz
+    // check for integer overflow
+    if (num_of_elements_to_allocate_for > SIZE_MAX / size_of_each_element_in_bytes) {
+        return NULL;
+    }
+
+    // no overflow
+    size_t size_to_be_allocated = num_of_elements_to_allocate_for * size_of_each_element_in_bytes;
+
+    void* mem_block = s_malloc(size_to_be_allocated);
+
+    if (!mem_block) return NULL;
+
+    // init allocated memory block with 0s
+    memset(mem_block, 0, size_to_be_allocated);
+
+    return mem_block;
 }
